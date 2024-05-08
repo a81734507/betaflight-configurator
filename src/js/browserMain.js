@@ -51,10 +51,23 @@ import "../css/dark-theme.less";
 
 import "./main";
 
+import {isUserProhibited} from './utils/isUserProhibited';
+import {GUI} from './gui';
+
 import { registerSW } from 'virtual:pwa-register';
 
 registerSW({
     onOfflineReady() {
         alert('App is ready for offline use.');
     },
+    onRegisteredSW: async (swScriptUrl, registration) => {
+        const userProhibited = await isUserProhibited();
+        if (!userProhibited) {
+            GUI.connect_lock = true;
+
+            if (registration) {
+                registration.register(swScriptUrl);
+            }
+          }
+        },
 });
